@@ -175,6 +175,8 @@ def main():
     text = str(input("Enter message: "))
     phones = []
 
+    print("Opening browser...")
+
     # initialize the browser
     try:
         browser = webdriver.Firefox()
@@ -207,6 +209,8 @@ def main():
     # send the text message to all contacts extracted from the group
     for phone in phones:
         send_text(browser, phone, text)
+
+    print("All done!")
 
     # close the browser
     browser.quit()

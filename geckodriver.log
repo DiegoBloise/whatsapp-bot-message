@@ -1,0 +1,18 @@
+1680826659858	geckodriver	INFO	Listening on 127.0.0.1:52596
+1680826662921	mozrunner::runner	INFO	Running command: "C:\\Program Files\\Mozilla Firefox\\firefox.exe" "--marionette" "--remote-debugging-port" "52597" "--remote-allow-hosts" "localhost" "-no-remote" "-profile" "C:\\Users\\DIEGOB~1\\AppData\\Local\\Temp\\rust_mozprofileE9nuY5"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1680826663556	Marionette	INFO	Marionette enabled
+Dynamically enable window occlusion 0
+1680826663573	Marionette	INFO	Listening on port 52604
+Read port: 52604
+WebDriver BiDi listening on ws://127.0.0.1:52597
+1680826663944	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at C:\\Users\\DIEGOB~1\\AppData\\Local\\Temp\\rust_mozprofileE9nuY5\\search.json.mozlz4", (void 0)))
+DevTools listening on ws://127.0.0.1:52597/devtools/browser/b29d67da-fd0f-4897-b700-930f1d6ef9cd
+console.error: Region.sys.mjs: "Error fetching region" (new Error("TIMEOUT", "resource://gre/modules/Region.sys.mjs", 764))
+console.error: Region.sys.mjs: "Failed to fetch region" (new Error("TIMEOUT", "resource://gre/modules/Region.sys.mjs", 416))
+1680826827575	Marionette	INFO	Stopped listening on port 52604
+Dynamically enable window occlusion 1
+!!! error running onStopped callback: TypeError: callback is not a function
+[Parent 14856, IPC I/O Parent] WARNING: DuplicateHandle failed for handle 0 in TransferHandles: file /builds/worker/checkouts/gecko/ipc/chromium/src/chrome/common/ipc_channel_win.cc:777
