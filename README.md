@@ -9,12 +9,13 @@ This script uses the Selenium webdriver to extract phone numbers of members from
 
 ## Usage
   1. Run the script `whatsapp-bot-smgm.py`
-  2. Enter the name of the group whose members' phone numbers you want to extract.
-  3. Enter the message you want to send.
-  4. Log in to your WhatsApp Web account when prompted.
-  5. Wait for the script to extract all phone numbers.
-  6. When the extraction is complete, the script will print all the phone numbers in the console.
-  7. The message will be sent to all members of the group.
+  2. Enter the name of the group from which you want to extract members' phone numbers.
+  3. Enter the phone numbers you want to exclude to avoid sending them messages.
+  4. Enter the message you want to send.
+  5. Log in to your WhatsApp Web account when prompted.
+  6. Wait for the script to extract all phone numbers.
+  7. When the extraction is complete, the script will print all the phone numbers in the console.
+  8. The message will be sent to all members of the group except those you have excluded.
 
 Note: Please make sure that you have the latest version of Firefox installed on your system. You can download it from https://www.mozilla.org/en-US/firefox/new/
 

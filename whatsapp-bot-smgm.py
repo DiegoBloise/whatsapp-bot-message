@@ -70,7 +70,7 @@ def send_text(browser, phone, text):
 def main():
 
     group_name = str(input("Enter the group name to search ~>> "))
-    phones_to_exclude = str(input("\nEnter the 4 final numbers of all phones to exclude separated by comma\nEx: XXXX,XXXX,XXXX\n~>> ")).split(",")
+    phones_to_exclude = str(input("\nEnter the 4 final numbers of all phones to exclude separated by spaces\nEx: XXXX XXXX XXXX\n~>> ")).split(" ")
     text = str(input("\nEnter text message (use \"\\n\" to write in another line)\nEx: First Line\\nSecond Line\n~>> "))
 
     print("Opening browser...")
