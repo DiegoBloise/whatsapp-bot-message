@@ -105,7 +105,8 @@ def main():
     # send the text message to all contacts extracted from the group
     for i, phone in enumerate(phones):
         print(f"{i+1}º - {phone}")
-        send_text(browser, phone, text)
+        if phone not in phones_to_exclude:
+            send_text(browser, phone, text)
 
     # close the browser
     browser.quit()
