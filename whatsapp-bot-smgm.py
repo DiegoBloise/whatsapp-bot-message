@@ -33,16 +33,17 @@ def find_group(browser, group_name):
         exit()
 
 
-def create_phone_list(browser, group, number_of_members):
-    phones = []
+def create_accounts_list(browser, group, number_of_members):
+    accounts = {}
     get_contacts(browser, group)
     for index in range(number_of_members):
-        next_contact(browser, index)
+        contact = next_contact(browser, index)
         if (show_contact_chat(browser)):
             show_contact_info(browser)
-            phones.append(get_phone_number(browser))
+            phone = get_phone_number(browser)
+            accounts[contact] = phone
             get_contacts(browser, group)
-    return phones
+    return accounts
 
 
 def get_contacts(browser, group):
@@ -76,7 +77,7 @@ def get_number_of_members(browser, group):
     group.click()
     show_group_info(browser)
     try:
-        number_of_members = int(group.find_element(By.XPATH, number_of_members_xpath).text[0])
+        number_of_members = int(group.find_element(By.XPATH, number_of_members_xpath).text.split(" ")[0])
         print(f"Number of members: {number_of_members}")
     except NoSuchElementException as e:
         print(f"Number of members element not found: {e}")
@@ -97,10 +98,13 @@ def next_contact(browser, index):
         print("Finding contacts...")
         elements = browser.find_element(By.XPATH, contacts_box_xpath).find_elements(By.TAG_NAME, 'div')
         for element in elements:
-            if element.get_attribute('data-testid') and element.get_attribute('data-testid') == f"list-item-{index}":
-                print(f"Contact: {element.find_element(By.TAG_NAME, 'span').text}")
+            if (element.get_attribute('data-testid') and
+                element.get_attribute('data-testid') == f"list-item-{index}"):
+                contact = element.find_element(By.TAG_NAME, 'span').text
+                print(f"Contact: {contact}")
                 element.click()
                 sleep(1)
+                return contact
     except NoSuchElementException as e:
         print(f"Contacts not found: {e}")
         browser.quit()
@@ -159,7 +163,7 @@ def send_text(browser, phone, text):
             exit()
         while len(browser.find_elements(By.XPATH, send_button_xpath)) < 1:
             print("Waiting to send the message...")
-            sleep(3)
+            sleep(5)
         browser.find_element(By.XPATH, send_button_xpath).click()
         print("Message sent.")
         sleep(3)
@@ -173,7 +177,6 @@ def main():
 
     group_name = str(input("Enter group name: "))
     text = str(input("Enter message: "))
-    phones = []
 
     print("Opening browser...")
 
@@ -202,18 +205,19 @@ def main():
     sleep(3)
 
     group = find_group(browser, group_name)
-    phones = create_phone_list(browser, group, get_number_of_members(browser, group))
 
-    print(phones)
+    number_of_members = get_number_of_members(browser, group)
+
+    accounts = create_accounts_list(browser, group, number_of_members)
 
     # send the text message to all contacts extracted from the group
-    for phone in phones:
+    for contact, phone in accounts.items():
+        print(f"Sending message to Contact: {contact} - Phone: {phone}")
         send_text(browser, phone, text)
-
-    print("All done!")
 
     # close the browser
     browser.quit()
 
+    print("All done!")
 
 main()
