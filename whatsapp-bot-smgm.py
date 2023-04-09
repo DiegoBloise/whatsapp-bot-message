@@ -1,20 +1,15 @@
+from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
-from time import sleep
 
 # Elements XPATH
-group_info_xpath = '/html/body/div[1]/div/div/div[5]/div/header/div[2]/div[1]'
-contacts_list_xpath = '/html/body/div[1]/div/div/div[6]/span/div/span/div/div/section/div[6]/div[1]/div/div/div[1]'
-contacts_box_xpath = '/html/body/div[1]/div/span[2]/div/span/div/div/div/div/div/div/div[2]'
-contacts_header_xpath = '/html/body/div[1]/div/span[2]/div/span/div/div/div/div/div/div/header'
-contact_chat_xpath = '/html/body/div[1]/div/span[4]/div/ul/div/li[4]'
-contact_info_xpath = '/html/body/div[1]/div/div/div[5]/div/header/div[2]'
-contact_phone_xpath = '/html/body/div[1]/div/div/div[6]/span/div/span/div/div/section/div[1]/div[2]/div/span/span'
-business_phone_xpath = '/html/body/div[1]/div/div/div[6]/span/div/span/div/div/section/div[6]/div[3]/div/div/span/span'
-number_of_members_xpath = '/html/body/div[1]/div/div/div[6]/span/div/span/div/div/section/div[6]/div[1]/div/div/div[1]/span'
-group_admin_marker_xpath = '/html/body/div[1]/div/div/div[6]/span/div/span/div/div/section/div[6]/div[2]/div[3]/div/div[1]/div/div/div[2]/div[1]/div[2]/div'
-close_info_button_xpath = '/html/body/div[1]/div/div/div[6]/span/div/span/div/header/div/div[1]/div'
+search_box_xpath = '/html/body/div[1]/div/div/div[4]/div/div[1]/div/div/div[2]/div/div[1]'
+group_members_xpath = '/html/body/div[1]/div/div/div[5]/div/header/div[2]/div[2]/span'
+pane_side_xpath = '//*[@id="pane-side"]'
 send_button_xpath = '/html/body/div[1]/div/div/div[5]/div/footer/div[1]/div/span[2]/div/div[2]/div[2]/button'
 
 
@@ -22,9 +17,12 @@ def find_group(browser, group_name):
     elements = []
     try:
         print("Finding group...")
-        elements = browser.find_elements(By.TAG_NAME, 'span')
+        for key in group_name:
+            browser.find_element(By.XPATH, search_box_xpath).send_keys(key)
+        sleep(1)
+        elements = browser.find_element(By.XPATH, pane_side_xpath).find_elements(By.TAG_NAME, 'span')
         for element in elements:
-            if element.get_attribute("title") == group_name:
+            if element.text == group_name:
                 print(f"Group found: {element.text}")
                 return element
     except NoSuchElementException as e:
@@ -33,140 +31,36 @@ def find_group(browser, group_name):
         exit()
 
 
-def create_accounts_list(browser, group, number_of_members):
-    accounts = {}
-    get_contacts(browser, group)
-    for index in range(number_of_members):
-        contact = next_contact(browser, index)
-        if (show_contact_chat(browser)):
-            show_contact_info(browser)
-            phone = get_phone_number(browser)
-            accounts[contact] = phone
-            get_contacts(browser, group)
-    return accounts
-
-
-def get_contacts(browser, group):
-    group.click()
-    sleep(1)
-    show_group_info(browser)
-    show_contacts_list(browser)
-
-
-def show_group_info(browser):
+def get_phones(browser, group):
+    phones = []
     try:
-        browser.find_element(By.XPATH, group_info_xpath).click()
-        sleep(1)
+        print("Getting phone list...")
+        group.click()
+        wait = WebDriverWait(browser, 5)
+        wait.until(EC.text_to_be_present_in_element((By.XPATH, group_members_xpath), ", "))
+        phones = browser.find_element(By.XPATH, group_members_xpath).text.split(', ')
+        return phones
     except NoSuchElementException as e:
-        print(f"Group info element not found: {e}")
+        print(f"Phones list element not found: {e}")
         browser.quit()
         exit()
-
-
-def show_contacts_list(browser):
-    try:
-        browser.find_element(By.XPATH, contacts_list_xpath).click()
-        sleep(1)
-    except NoSuchElementException as e:
-        print(f"Contacts list element not found: {e}")
-        browser.quit()
-        exit()
-
-
-def get_number_of_members(browser, group):
-    group.click()
-    show_group_info(browser)
-    try:
-        number_of_members = int(group.find_element(By.XPATH, number_of_members_xpath).text.split(" ")[0])
-        print(f"Number of members: {number_of_members}")
-    except NoSuchElementException as e:
-        print(f"Number of members element not found: {e}")
-        browser.quit()
-        exit()
-    try:
-        browser.find_element(By.XPATH, close_info_button_xpath).click()
-    except NoSuchElementException as e:
-        print(f"Close button element not found: {e}")
-        browser.quit()
-        exit()
-    return number_of_members
-
-
-def next_contact(browser, index):
-    elements = []
-    try:
-        print("Finding contacts...")
-        elements = browser.find_element(By.XPATH, contacts_box_xpath).find_elements(By.TAG_NAME, 'div')
-        for element in elements:
-            if (element.get_attribute('data-testid') and
-                element.get_attribute('data-testid') == f"list-item-{index}"):
-                contact = element.find_element(By.TAG_NAME, 'span').text
-                print(f"Contact: {contact}")
-                element.click()
-                sleep(1)
-                return contact
-    except NoSuchElementException as e:
-        print(f"Contacts not found: {e}")
-        browser.quit()
-        exit()
-
-
-def show_contact_chat(browser):
-    try:
-        browser.find_element(By.XPATH, contact_chat_xpath).click()
-        sleep(1)
-        return True
-    except NoSuchElementException as e:
-        print(f"Trying to message yourself, skipping...")
-        try:
-            browser.find_element(By.XPATH, contacts_header_xpath).click()
-            sleep(1)
-            return False
-        except NoSuchElementException as e:
-            print(f"Contact chat element not found: {e}")
-            browser.quit()
-            exit()
-
-
-def show_contact_info(browser):
-    try:
-        browser.find_element(By.XPATH, contact_info_xpath).click()
-        sleep(1)
-    except NoSuchElementException as e:
-        print(f"Contact info element not found: {e}")
-        browser.quit()
-        exit()
-
-
-def get_phone_number(browser):
-    try:
-        phone = browser.find_element(By.XPATH, contact_phone_xpath).text
-    except:
-        print(f"Number not found, may be is a business account")
-        try:
-            phone = browser.find_element(By.XPATH, business_phone_xpath).text
-        except NoSuchElementException as e:
-            print(f"Number not found: {e}")
-            browser.quit()
-            exit()
-    print(f"Phone: {phone}")
-    return phone
 
 
 def send_text(browser, phone, text):
     try:
         try:
+            text = text.replace("\\n", "%0A")
             browser.get(f"https://web.whatsapp.com/send?phone={phone}&text={text}")
         except Exception as e:
             print(f"Could not send message: {e}")
             browser.quit()
             exit()
-        while len(browser.find_elements(By.XPATH, send_button_xpath)) < 1:
-            print("Waiting to send the message...")
-            sleep(5)
+        print("Waiting to send the message...")
+        wait = WebDriverWait(browser, 120)
+        wait.until(EC.visibility_of_element_located((By.XPATH, send_button_xpath)))
         browser.find_element(By.XPATH, send_button_xpath).click()
-        print("Message sent.")
-        sleep(3)
+        print(f"Message sent to phone: {phone}")
+        #sleep(1)
     except Exception as e:
         print(f"Error: {e}")
         browser.quit()
@@ -175,8 +69,9 @@ def send_text(browser, phone, text):
 
 def main():
 
-    group_name = str(input("Enter group name: "))
-    text = str(input("Enter message: "))
+    group_name = str(input("Enter the group name to search ~>> "))
+    phones_to_exclude = str(input("\nEnter the 4 final numbers of all phones to exclude separated by comma\nEx: XXXX,XXXX,XXXX\n~>> ")).split(",")
+    text = str(input("\nEnter text message (use \"\\n\" to write in another line)\nEx: First Line\\nSecond Line\n~>> "))
 
     print("Opening browser...")
 
@@ -196,23 +91,20 @@ def main():
         exit()
 
     # wait for QR code get scanned
-    while len(browser.find_elements(By.ID, 'pane-side')) < 1:
-        print("Scan the QR code to log in...")
-        sleep(3)
+    print("Scan the QR code to log in...")
+    wait = WebDriverWait(browser, 120)
+    wait.until(EC.visibility_of_element_located((By.ID, 'pane-side')))
 
     print("Success...")
 
-    sleep(3)
-
     group = find_group(browser, group_name)
+    phones = get_phones(browser, group)
 
-    number_of_members = get_number_of_members(browser, group)
-
-    accounts = create_accounts_list(browser, group, number_of_members)
+    print(f"Total of members: {len(phones)}")
 
     # send the text message to all contacts extracted from the group
-    for contact, phone in accounts.items():
-        print(f"Sending message to Contact: {contact} - Phone: {phone}")
+    for i, phone in enumerate(phones):
+        print(f"{i+1}º - {phone}")
         send_text(browser, phone, text)
 
     # close the browser
