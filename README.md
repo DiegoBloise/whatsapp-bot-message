@@ -4,8 +4,13 @@ This script uses the Selenium webdriver to extract phone numbers of members from
 
 ## Installation
 
+  ### Running source file
   1. Install Python ( https://www.python.org/downloads/ )
   2. Install Selenium using pip: `pip install selenium`
+  3. Install PyAutoGUI using pip: `pip install pyautogui`
+
+  ### Running executable file in Windows
+  1. Download and run `whatsapp-bot-smgm.exe` file located at <a href="dist\whatsapp-bot-smgm.exe">`dist\whatsapp-bot-smgm.exe`</a>
 
 ## Usage
   1. Run the script `whatsapp-bot-smgm.py`
