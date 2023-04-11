@@ -116,7 +116,6 @@ def send_text(browser, phone, text):
 
         send_button.click()
 
-        system("pause")
         print(f"\x1b[1m[+]\x1b[m \x1b[1;32mMessage sent to phone: {phone}\x1b[m")
         sleep(2)
     except Exception as e:
