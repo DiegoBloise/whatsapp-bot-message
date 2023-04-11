@@ -111,9 +111,9 @@ def send_text(browser, phone, text):
 
         wait = WebDriverWait(browser, 30)
         wait.until(EC.visibility_of_element_located((By.TAG_NAME, "footer")))
+        send_button = browser.find_element(By.XPATH, send_button_xpath)
 
         sleep(3)
-
         send_button.click()
 
         print(f"\x1b[1m[+]\x1b[m \x1b[1;32mMessage sent to phone: {phone}\x1b[m")

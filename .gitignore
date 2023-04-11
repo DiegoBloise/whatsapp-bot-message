@@ -17,3 +17,4 @@ build/whatsapp-bot-smgm/localpycs/pyimod02_importers.pyc
 build/whatsapp-bot-smgm/localpycs/pyimod03_ctypes.pyc
 build/whatsapp-bot-smgm/localpycs/pyimod04_pywin32.pyc
 build/whatsapp-bot-smgm/localpycs/struct.pyc
+dist/geckodriver.log
