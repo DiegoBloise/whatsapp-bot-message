@@ -10,19 +10,20 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
 # Elements XPATH
-search_box_xpath = "/html/body/div[1]/div/div/div[4]/div/div[1]/div/div/div[2]/div/div[1]"
-group_members_xpath = "/html/body/div[1]/div/div/div[5]/div/header/div[2]/div[2]/span"
-send_button_xpath = "/html/body/div[1]/div/div/div[5]/div/footer/div[1]/div/span[2]/div/div[2]/div[2]/button"
-contact_info_xpath = "/html/body/div[1]/div/div/div[5]/div/header/div[2]"
-contact_phone_xpath = "/html/body/div[1]/div/div/div[6]/span/div/span/div/div/section/div[1]/div[2]/div/span/span"
+initial_startup = "wa_web_initial_startup"
+qr_code_xpath = "/html/body/div[2]/div/div/div[2]/div[3]/div[1]/div/div/div[2]/div/canvas"
+search_box_xpath = "/html/body/div[1]/div/div/div[2]/div[3]/div/div[1]/div/div[2]/div[2]/div/div[1]"
+group_members_xpath = "/html/body/div[1]/div/div/div[2]/div[4]/div/header/div[2]/div[2]/span"
+contact_info_xpath = "/html/body/div[1]/div/div/div[2]/div[4]/div/header/div[2]/div/div/div/span"
+contact_phone_xpath = "/html/body/div[1]/div/div/div[2]/div[5]/span/div/span/div/div/section/div[1]/div[2]/div/span/span"
 business_phone_xpath = "/html/body/div[1]/div/div/div[6]/span/div/span/div/div/section/div[6]/div[3]/div/div/span/span"
-
+send_button_xpath = "/html/body/div[1]/div/div/div[2]/div[4]/div/footer/div[1]/div/span[2]/div/div[2]/div[2]/button"
 
 def find_subject(browser, subject_name):
     try:
         print("\x1b[1m[*]\x1b[m \x1b[33mSearching subject...\x1b[m")
 
-        search_box = browser.find_element(By.XPATH, search_box_xpath)
+        """ search_box = browser.find_element(By.XPATH, search_box_xpath)
 
         search_box.send_keys(Keys.CONTROL + "a" + Keys.DELETE)
 
@@ -32,6 +33,25 @@ def find_subject(browser, subject_name):
 
         sleep(1)
         search_box.send_keys(Keys.ARROW_DOWN)
+        sleep(1) """
+
+        browser.find_element(By.XPATH, "/html/body/div[1]/div/div/div[2]/div[3]/header").click()
+
+        sleep(10)
+
+        pyautogui.press('tab', presses=7)
+
+        pyautogui.hotkey('ctrl', 'a')
+        pyautogui.hotkey('delete')
+
+        sleep(3)
+
+        for key in subject_name:
+            pyautogui.press(key)
+            sleep(0.1)
+
+        sleep(1)
+        pyautogui.press('down')
         sleep(1)
 
         return
@@ -167,10 +187,10 @@ def main():
         exit()
 
     wait = WebDriverWait(browser, 120)
-    wait.until(EC.visibility_of_element_located((By.ID, "initial_startup")))
+    wait.until(EC.visibility_of_element_located((By.ID, initial_startup)))
 
     print("\x1b[1m[*]\x1b[m \x1b[33mLoading QR Code...\x1b[m")
-    wait.until(EC.visibility_of_element_located((By.TAG_NAME, "canvas")))
+    wait.until(EC.visibility_of_element_located((By.XPATH, qr_code_xpath)))
 
     print("\x1b[1m[+]\x1b[m \x1b[1;32mScan the QR code to continue...\x1b[m")
     browser.find_element(By.CLASS_NAME, "landing-main").screenshot("qrcode.png")
